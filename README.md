@@ -1,4 +1,4 @@
-# Reto Final — El Triángulo de Hierro 🔺
+# Reto Final — El Triángulo de Hierro 
 
 **Sistemas Operativos — Universidad EAFIT, 2026-1**
 
@@ -375,8 +375,7 @@ Texto natural tiene alta variedad de caracteres — poca repetición byte a byte
 
 ## Equipo
 
-| Integrante | Rol |
-|------------|-----|
-| Ismael GC | Arquitectura del pipeline, RC4, RLE, gestión segura de memoria |
+Ismael García Ceballos
+Juan Pablo Parra El-Masri
 
 **Materia:** Sistemas Operativos — Universidad EAFIT, 2026-1
