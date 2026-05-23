@@ -376,6 +376,7 @@ Texto natural tiene alta variedad de caracteres — poca repetición byte a byte
 ## Equipo
 
 Ismael García Ceballos
+
 Juan Pablo Parra El-Masri
 
 **Materia:** Sistemas Operativos — Universidad EAFIT, 2026-1
