@@ -1,7 +1,7 @@
 /*
  * editor.c — Editor de archivos con pipeline de seguridad
  *
- * Pipeline (orden correcto — Nivel Arquitecto OS):
+ * Pipeline:
  *   ESCRITURA: datos → [RLE compress] → [RC4 encrypt] → disco
  *   LECTURA:   disco → [RC4 decrypt] → [RLE decompress] → datos
  *
@@ -42,13 +42,13 @@
 #include "compress.h"
 #include "crypto.h"
 
-/* ───────────────────────────── Constantes ───────────────────────────── */
+/* ========== Constantes ========== */
 
 #define PAGE_SIZE        4096                  /* Tamaño de página x86/Linux */
 #define MAX_KEY_LEN      256
 #define MAX_FILE_SIZE    (200 * 1024 * 1024)   /* 200 MB límite de seguridad */
 
-/* ───────────────────────────── Passphrase ───────────────────────────── */
+/* ========== Passphrase ========== */
 
 /*
  * Obtener la passphrase de forma segura.
@@ -113,7 +113,7 @@ static ssize_t obtener_passphrase(uint8_t *buf, size_t max_len) {
     return len;
 }
 
-/* ───────────────────────────── I/O helpers ──────────────────────────── */
+/* ========== I/O helpers ========== */
 
 /*
  * Leer un archivo completo en un buffer dinámico.
@@ -213,7 +213,7 @@ static int escribir_archivo(const char *path, const uint8_t *buf, size_t len) {
     return 0;
 }
 
-/* ───────────────────────── Operación WRITE ──────────────────────────── */
+/* ========== Operación WRITE ========== */
 static int cmd_write(const char *output_path) {
     fprintf(stderr, "[pipeline] Modo escritura: %s\n", output_path);
 
@@ -276,7 +276,7 @@ static int cmd_write(const char *output_path) {
     return ret;
 }
 
-/* ───────────────────────── Operación READ ───────────────────────────── */
+/* ========== Operación READ ========== */
 static int cmd_read(const char *input_path) {
     fprintf(stderr, "[pipeline] Modo lectura: %s\n", input_path);
 
@@ -342,7 +342,7 @@ static int cmd_read(const char *input_path) {
     return 0;
 }
 
-/* ────────────────────────────── main ───────────────────────────────── */
+/* ========== main ========== */
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         fprintf(stderr,

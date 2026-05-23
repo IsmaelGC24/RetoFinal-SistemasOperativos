@@ -31,7 +31,7 @@ titulo()     { echo -e "${BOLD}${YELLOW}$1${NC}"; }
 ok()         { echo -e "  ${GREEN}✓${NC} $1"; }
 info()       { echo -e "  ${CYAN}→${NC} $1"; }
 
-# ─── Verificar dependencias ──────────────────────────────────────────────────
+# ========== Verificar dependencias ==========
 verificar_deps() {
     for cmd in strace python3; do
         if ! command -v "$cmd" &>/dev/null; then
@@ -49,7 +49,7 @@ verificar_deps() {
     fi
 }
 
-# ─── Generar archivo de prueba ───────────────────────────────────────────────
+# ========== Generar archivo de prueba ==========
 generar_archivo() {
     titulo "Generando archivo de prueba (${TAMANIO_MB} MB)..."
     python3 -c "
@@ -64,7 +64,7 @@ sys.stdout.buffer.write(data)
     ok "Archivo generado: ${TAMANIO_MB} MB en $ARCHIVO_PRUEBA"
 }
 
-# ─── Benchmark A: Guardado clásico ──────────────────────────────────────────
+# ========== Benchmark A: Guardado clásico ==========
 benchmark_clasico() {
     titulo "\n═══ ESCENARIO A: Guardado Clásico (cp sin transformación) ═══"
     local out="/tmp/bench_a_out.dat"
@@ -94,7 +94,7 @@ benchmark_clasico() {
     rm -f "$out"
 }
 
-# ─── Benchmark B: Pipeline RLE → RC4 ────────────────────────────────────────
+# ========== Benchmark B: Pipeline RLE → RC4 ==========
 benchmark_pipeline() {
     titulo "\n═══ ESCENARIO B: Pipeline Completo (RLE compress → RC4 encrypt) ═══"
     local out="/tmp/bench_b_out.bin"
@@ -125,7 +125,7 @@ benchmark_pipeline() {
     rm -f "$out"
 }
 
-# ─── Benchmark C: Aislamiento de cargas (strace + desglose) ─────────────────
+# ========== Benchmark C: Aislamiento de cargas (strace + desglose) ==========
 benchmark_desglose() {
     titulo "\n═══ ESCENARIO C: Profiling CPU — Aislamiento de Componentes ═══"
 
@@ -196,7 +196,7 @@ PYEOF
     rm -f "$out_c" /tmp/strace_out.bin
 }
 
-# ─── Tabla comparativa final ─────────────────────────────────────────────────
+# ========== Tabla comparativa final ==========
 tabla_final() {
     titulo "\n═══════════════════════════════════════════════════════════"
     titulo " TABLA COMPARATIVA FINAL — El Triángulo de Hierro"
@@ -262,7 +262,7 @@ print(f"  {disco_b//1024} KB, no sobre los {orig//1024//1024} MB originales.")
 PYEOF
 }
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
+# =================== Main ================
 main() {
     separador
     echo -e "${BOLD} BENCHMARK — Reto Final: El Triángulo de Hierro${NC}"

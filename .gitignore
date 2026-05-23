@@ -1,30 +1,30 @@
-# ── Binario compilado ──────────────────────────────────────────
+# Binario compilado 
 editor
 editor.exe
 
-# ── Archivos objeto ────────────────────────────────────────────
+# Archivos objeto 
 src/*.o
 *.o
 
-# ── Archivos de prueba generados durante ejecución ────────────
+# Archivos de prueba generados durante ejecución 
 *.bin
 *.dat
 *.txt
 !README.md
 
-# ── Archivos del benchmark ─────────────────────────────────────
+# Archivos del benchmark 
 archivo_50mb.txt
 /tmp/
 
-# ── Sistema operativo ──────────────────────────────────────────
+# Sistema operativo 
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# ── VS Code ────────────────────────────────────────────────────
+# VS Code 
 .vscode/
 
-# ── Editor de texto ────────────────────────────────────────────
+# Editor de texto 
 *~
 *.swp
 *.swo
