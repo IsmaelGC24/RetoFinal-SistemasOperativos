@@ -11,6 +11,7 @@ src/*.o
 *.dat
 *.txt
 !README.md
+!loremIpsum.txt
 
 # Archivos del benchmark 
 archivo_50mb.txt
