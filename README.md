@@ -210,12 +210,4 @@ RC4 no es seguro para produccion moderna. Tiene sesgos conocidos en su keystream
 
 Para produccion se usaria un algoritmo moderno como AES-GCM o ChaCha20-Poly1305 con autenticacion, nonces correctos y una libreria criptografica auditada.
 
-## Defensa oral rapida
-
-- Espacio: RLE reduce mucho cuando hay runs largos.
-- Tiempo: RLE y RC4 agregan CPU user mode.
-- Seguridad: RC4 cifra los datos en reposo, y la passphrase se borra de RAM.
-- Orden: comprimir antes de cifrar conserva patrones para RLE; cifrar antes destruye esos patrones.
-- Sistema operativo: `read()`, `write()`, buffers en RAM, `mlock()`, `munlock()`, `PAGE_SIZE` y `strace` conectan el proyecto con el kernel.
-
 
