@@ -1,6 +1,7 @@
 # Reto Final - El Triangulo de Hierro
 
 **Sistemas Operativos - Universidad EAFIT**
+
 ## Equipo
 
 - Ismael Garcia Ceballos
@@ -18,6 +19,8 @@ read file -> RC4 decrypt in RAM -> RLE decompress -> stdout
 
 El disco solo recibe el resultado final. Todo el procesamiento ocurre en buffers en RAM.
 
+---
+
 ## Estructura
 
 ```text
@@ -30,7 +33,10 @@ src/
 Makefile
 benchmark.sh
 README.md
+loremIpsum.txt
 ```
+
+---
 
 ## Compilacion
 
@@ -44,25 +50,130 @@ El proyecto compila con:
 -Wall -Wextra -O2 -std=c11 -g
 ```
 
-## Uso principal
+Salida esperada sin errores ni warnings:
 
-Modo interactivo: la llave se lee desde `/dev/tty` con echo desactivado.
-
-```bash
-./editor write protegido.bin < input.dat
-./editor read protegido.bin > recovered.dat
-diff input.dat recovered.dat
+```text
+gcc -Wall -Wextra -O2 -std=c11 -g -c -o src/editor.o src/editor.c
+gcc -Wall -Wextra -O2 -std=c11 -g -c -o src/compress.o src/compress.c
+gcc -Wall -Wextra -O2 -std=c11 -g -c -o src/crypto.o src/crypto.c
+gcc -Wall -Wextra -O2 -std=c11 -g -o editor src/editor.o src/compress.o src/crypto.o
 ```
 
-Modo automatizado para pruebas y benchmark:
+---
+
+## Ejecucion paso a paso
+
+### Opcion A: con datos binarios repetitivos (caso favorable para RLE)
+
+**1. Generar archivo de prueba:**
+
+```bash
+python3 -c "import sys; sys.stdout.buffer.write(b'A'*10000 + b'B'*5000 + b'C'*8000)" > input.dat
+```
+
+**2. Verificar que existe:**
+
+```bash
+ls -lh input.dat
+```
+
+**3. Cifrar y comprimir:**
 
 ```bash
 EDITOR_KEY="secretkey123" ./editor write protegido.bin < input.dat
-EDITOR_KEY="secretkey123" ./editor read protegido.bin > recovered.dat
-diff input.dat recovered.dat
 ```
 
-La llave no esta hardcoded y no se pasa por `argv`.
+Salida esperada:
+
+```text
+[pipeline] Modo escritura: protegido.bin
+[pipeline] 1/4 Leyendo datos de stdin...
+[pipeline]     Leidos 23000 bytes
+[pipeline] 2/4 Comprimiendo con RLE...
+[pipeline]     23000 -> 184 bytes (99.2% reduccion)
+[pipeline] 3/4 Cifrando con RC4...
+[pipeline]     Cifrado completado
+[pipeline] 4/4 Escribiendo a disco...
+[pipeline] Listo. Tamano en disco: 184 bytes
+```
+
+**4. Descifrar y descomprimir:**
+
+```bash
+EDITOR_KEY="secretkey123" ./editor read protegido.bin > recovered.dat
+```
+
+Salida esperada:
+
+```text
+[pipeline] Modo lectura: protegido.bin
+[pipeline] 1/4 Leyendo archivo...
+[pipeline]     184 bytes leidos del disco
+[pipeline] 2/4 Descifrando con RC4...
+[pipeline] 3/4 Descomprimiendo RLE...
+[pipeline]     Recuperados 23000 bytes originales
+[pipeline] 4/4 Enviando a stdout...
+[pipeline] Listo.
+```
+
+**5. Verificar integridad:**
+
+```bash
+diff input.dat recovered.dat && echo "✓ Integridad OK"
+```
+
+Si `diff` no imprime diferencias y aparece `✓ Integridad OK`, los datos recuperados son bit a bit identicos al original.
+
+---
+
+### Opcion B: con el archivo loremIpsum.txt incluido en el repo
+
+**1. Cifrar y comprimir:**
+
+```bash
+EDITOR_KEY="secretkey123" ./editor write protegido.bin < loremIpsum.txt
+```
+
+Salida esperada:
+
+```text
+[pipeline] Modo escritura: protegido.bin
+[pipeline] 1/4 Leyendo datos de stdin...
+[pipeline]     Leidos 8959 bytes
+[pipeline] 2/4 Comprimiendo con RLE...
+[pipeline]     8959 -> 17618 bytes (-96.7% reduccion)
+[pipeline] 3/4 Cifrando con RC4...
+[pipeline]     Cifrado completado
+[pipeline] 4/4 Escribiendo a disco...
+[pipeline] Listo. Tamano en disco: 17618 bytes
+```
+
+> **Nota:** El archivo crece porque lorem ipsum es texto variado con poca repeticion byte a byte.
+> RLE comprime eficientemente datos con runs largos (binarios, padding, campos fijos).
+> Para texto natural la entropia es mayor y RLE expande el archivo. El cifrado y la
+> recuperacion siguen funcionando correctamente — esto no es un error.
+
+**2. Descifrar y descomprimir:**
+
+```bash
+EDITOR_KEY="secretkey123" ./editor read protegido.bin > recovered.txt
+```
+
+**3. Verificar integridad:**
+
+```bash
+diff loremIpsum.txt recovered.txt && echo "✓ Integridad OK"
+```
+
+---
+
+### Limpiar archivos generados
+
+```bash
+make clean && rm -f input.dat protegido.bin recovered.dat recovered.txt
+```
+
+---
 
 ## Modos para benchmark
 
@@ -83,6 +194,8 @@ EDITOR_KEY="secretkey123" ./editor write out.enc < input.dat
 EDITOR_KEY="secretkey123" ./editor read out.enc > recovered.dat
 ```
 
+---
+
 ## Test de integridad
 
 ```bash
@@ -98,6 +211,8 @@ diff test_input.txt test_recovered.txt
 ```
 
 Si `diff` no imprime diferencias, la recuperacion es bit a bit identica.
+
+---
 
 ## Benchmark
 
@@ -141,6 +256,8 @@ Con el generador incluido en `benchmark.sh`, el tamano de entrada es 50 MB. Los 
 
 Conclusion: el escenario C gana **espacio** y **seguridad** frente a A. El costo es **tiempo de CPU** adicional. Ese costo es el triangulo de hierro: no hay mejora gratis, se intercambian recursos.
 
+---
+
 ## Por que comprimir antes de cifrar
 
 RLE comprime buscando runs de bytes repetidos:
@@ -164,6 +281,8 @@ datos con patrones -> RC4 -> datos pseudoaleatorios -> RLE -> no comprime o crec
 ```
 
 Por eso cifrar antes de comprimir falla por entropia. El compresor ya no encuentra redundancia; en el peor caso RLE representa cada byte como `[1][byte]` y duplica el tamano.
+
+---
 
 ## Seguridad de la llave
 
@@ -195,9 +314,13 @@ rc4_destroy(&ctx); // explicit_bzero(ctx, sizeof(RC4_CTX))
 
 `explicit_bzero()` se usa en vez de `memset()` porque el compilador no puede eliminarlo como una escritura muerta. Esto ayuda a garantizar que la llave y la S-box no queden en RAM despues de usarse.
 
+---
+
 ## Por que PAGE_SIZE = 4096
 
 `PAGE_SIZE` se define como 4096 bytes porque 4 KiB es el tamano tipico de pagina de memoria virtual en x86/Linux y tambien una unidad natural para I/O en muchos sistemas de archivos. El programa escribe en chunks de 4096 bytes con `write()`, lo que facilita analizar el comportamiento con `strace` y conectar la implementacion con conceptos de SO: paginas, buffers, syscalls y transferencia hacia disco.
+
+---
 
 ## Limitacion de RC4
 
