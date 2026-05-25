@@ -1,6 +1,10 @@
 # Reto Final - El Triangulo de Hierro
 
 **Sistemas Operativos - Universidad EAFIT**
+## Equipo
+
+- Ismael Garcia Ceballos
+- Juan Pablo Parra El-Masri
 
 Proyecto en C que demuestra el equilibrio entre **espacio, tiempo y seguridad** usando un pipeline propio en memoria:
 
@@ -214,9 +218,4 @@ Para produccion se usaria un algoritmo moderno como AES-GCM o ChaCha20-Poly1305 
 - Orden: comprimir antes de cifrar conserva patrones para RLE; cifrar antes destruye esos patrones.
 - Sistema operativo: `read()`, `write()`, buffers en RAM, `mlock()`, `munlock()`, `PAGE_SIZE` y `strace` conectan el proyecto con el kernel.
 
-## Equipo
 
-- Ismael Garcia Ceballos
-- Juan Pablo Parra El-Masri
-
-**Materia:** Sistemas Operativos - Universidad EAFIT
